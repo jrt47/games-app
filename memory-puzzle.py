@@ -1,27 +1,31 @@
 from tkinter import *
 from random import sample
-from sched import scheduler
-from time import time
-from time import sleep
+import threading
+import time
 
+WIDTH = 270
+HEIGHT = 290
 
 BUTTON_HEIGHT = 2
 BUTTON_WIDTH = 4
 
 X_PADDING = 40
-Y_PADDING = 15
+Y_PADDING = 10
 
 TITLE = "Memory Puzzle"
 
-ALL_CARDS = ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E',
-             'V', 'V', 'W', 'W', 'X', 'X', 'Y', 'Y', 'Z', 'Z']
+ALL_CARDS = ['A', 'A', 'B', 'B', 'C',
+             'C', 'D', 'D', 'E', 'E',
+             'V', 'V', 'W', 'W', 'X',
+             'X', 'Y', 'Y', 'Z', 'Z']
 
 cards = []
 revealed = []
 
 first = -1
 
-timer = scheduler(time, sleep)
+reveal_enabled = True
+
 
 def shuffle_cards():
     global cards
@@ -29,27 +33,38 @@ def shuffle_cards():
 
 
 def button_click(n):
-    if is_blank_card(n):
+    global reveal_enabled
+    if is_blank_card(n) and reveal_enabled:
         reveal_card(n)
         global first
         if first == -1:
             first = n
         elif cards[first] == cards[n]:
             first = -1
+            if check_for_win():
+                label_text.set("You win!")
+            else:
+                label_text.set("Correct!")
         else:
-            flip_wrong_cards_delay(n)
-            first = -1
+            reveal_enabled = False
+            label_text.set("Try again...")
+            task = threading.Thread(target=flip_wrong_cards, args=(n,))
+            task.start()
 
 
-def flip_wrong_cards_delay(n):
-    timer.enter(2, 1, flip_wrong_cards, argument=(n,))
-    timer.run()
+def check_for_win():
+    return not ('' in revealed)
 
 
 def flip_wrong_cards(n):
+    time.sleep(1)
+    global first
+    global reveal_enabled
     revealed[first] = ''
     revealed[n] = ''
     update_button_text()
+    first = -1
+    reveal_enabled = True
 
 
 def reveal_card(n):
@@ -68,18 +83,36 @@ def update_button_text():
 
 def reset():
     global first
+    global reveal_enabled
     first = -1
+    reveal_enabled = True
+    label_text.set("")
     shuffle_cards()
     clear_revealed()
+
 
 def clear_revealed():
     global revealed
     revealed = ['', '', '', '', '',
                 '', '', '', '', '',
                 '', '', '', '', '',
-                '', '', '', '', '',
                 '', '', '', '', '']
     update_button_text()
+
+
+def keep_groove(event):
+    if event.widget in buttons:
+        event.widget.config(relief=GROOVE)
+
+
+def place_window():
+    w = WIDTH
+    h = HEIGHT
+    ws = root.winfo_screenwidth()
+    hs = root.winfo_screenheight()
+    x = ws/2 - w/2
+    y = hs/2 - h/2
+    root.geometry("%dx%d+%d+%d" % (w, h, x, y))
 
 
 root = Tk()
@@ -114,45 +147,45 @@ button_texts = [bt0, bt1, bt2, bt3, bt4,
                 bt10, bt11, bt12, bt13, bt14,
                 bt15, bt16, bt17, bt18, bt19]
 
-b0 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b0 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
             textvariable=bt0, command=lambda: button_click(0))
-b1 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b1 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
             textvariable=bt1, command=lambda: button_click(1))
-b2 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b2 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
             textvariable=bt2, command=lambda: button_click(2))
-b3 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b3 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
             textvariable=bt3, command=lambda: button_click(3))
-b4 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b4 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
             textvariable=bt4, command=lambda: button_click(4))
-b5 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b5 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
             textvariable=bt5, command=lambda: button_click(5))
-b6 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b6 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
             textvariable=bt6, command=lambda: button_click(6))
-b7 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b7 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
             textvariable=bt7, command=lambda: button_click(7))
-b8 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b8 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
             textvariable=bt8, command=lambda: button_click(8))
-b9 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b9 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
             textvariable=bt9, command=lambda: button_click(9))
-b10 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b10 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
              textvariable=bt10, command=lambda: button_click(10))
-b11 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b11 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
              textvariable=bt11, command=lambda: button_click(11))
-b12 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b12 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
              textvariable=bt12, command=lambda: button_click(12))
-b13 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b13 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
              textvariable=bt13, command=lambda: button_click(13))
-b14 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b14 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
              textvariable=bt14, command=lambda: button_click(14))
-b15 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b15 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
              textvariable=bt15, command=lambda: button_click(15))
-b16 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b16 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
              textvariable=bt16, command=lambda: button_click(16))
-b17 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b17 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
              textvariable=bt17, command=lambda: button_click(17))
-b18 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b18 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
              textvariable=bt18, command=lambda: button_click(18))
-b19 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+b19 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
              textvariable=bt19, command=lambda: button_click(19))
 
 buttons = [b0, b1, b2, b3, b4,
@@ -181,12 +214,19 @@ b17.grid(row=4, column=2)
 b18.grid(row=4, column=3)
 b19.grid(row=4, column=4, padx=(0, X_PADDING))
 
+label_text = StringVar()
+label = Label(root, textvariable=label_text)
+label.grid(row=5, column=0, columnspan=5, pady=(Y_PADDING, 0))
+
 reset_button = Button(root, text="Reset", command=reset)
-reset_button.grid(row=5, column=0, columnspan=5, pady=Y_PADDING)
+reset_button.grid(row=6, column=0, columnspan=5, pady=Y_PADDING)
+
+root.bind('<Button-1>', keep_groove)
 
 
 def start():
     reset()
+    place_window()
     root.mainloop()
 
 

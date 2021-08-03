@@ -36,20 +36,13 @@ def button_click(position):
         update_button_text()
         if check_for_winner():
             label_text.set(f"{player}'s won!")
-            disable_buttons()
             return
         if check_for_tie():
             label_text.set("It's a tie.")
-            disable_buttons()
             return
         turn_counter += 1
         player = get_current_player()
         label_text.set(f"It's {player}'s turn.")
-
-
-def disable_buttons():
-    for i in range(9):
-        buttons[i]["state"] = "disabled"
 
 
 def enable_buttons():
@@ -97,6 +90,21 @@ def check_for_tie():
     return turn_counter >= 9
 
 
+def place_window():
+    w = WIDTH
+    h = HEIGHT
+    ws = root.winfo_screenwidth()
+    hs = root.winfo_screenheight()
+    x = ws/2 - w/2
+    y = hs/2 - h/2
+    root.geometry("%dx%d+%d+%d" % (w, h, x, y))
+
+
+def keep_groove(event):
+    if event.widget in buttons:
+        event.widget.config(relief=GROOVE)
+
+
 root = Tk()
 root.title(TITLE)
 
@@ -117,23 +125,23 @@ button_texts = [button_text_0, button_text_1, button_text_2,
                 button_text_3, button_text_4, button_text_5,
                 button_text_6, button_text_7, button_text_8]
 
-button_0 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+button_0 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
                   textvariable=button_text_0, command=lambda:button_click(0))
-button_1 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+button_1 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
                   textvariable=button_text_1, command=lambda:button_click(1))
-button_2 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+button_2 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
                   textvariable=button_text_2, command=lambda:button_click(2))
-button_3 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+button_3 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
                   textvariable=button_text_3, command=lambda:button_click(3))
-button_4 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+button_4 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
                   textvariable=button_text_4, command=lambda:button_click(4))
-button_5 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+button_5 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
                   textvariable=button_text_5, command=lambda:button_click(5))
-button_6 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+button_6 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
                   textvariable=button_text_6, command=lambda:button_click(6))
-button_7 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+button_7 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
                   textvariable=button_text_7, command=lambda:button_click(7))
-button_8 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH,
+button_8 = Button(root, height=BUTTON_HEIGHT, width=BUTTON_WIDTH, relief=GROOVE,
                   textvariable=button_text_8, command=lambda:button_click(8))
 
 buttons = [button_0, button_1, button_2,
@@ -157,15 +165,7 @@ label.grid(row=4, column=0, columnspan=3)
 reset_button = Button(root, text="Reset", command=reset)
 reset_button.grid(row=5, column=0, columnspan=3, pady=Y_PADDING)
 
-
-def place_window():
-    w = WIDTH
-    h = HEIGHT
-    ws = root.winfo_screenwidth()
-    hs = root.winfo_screenheight()
-    x = ws/2 - w/2
-    y = hs/2 - h/2
-    root.geometry("%dx%d+%d+%d" % (w, h, x, y))
+root.bind('<Button-1>', keep_groove)
 
 
 def start():
