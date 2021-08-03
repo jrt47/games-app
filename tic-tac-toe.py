@@ -155,7 +155,7 @@ label = Label(root, textvariable=label_text)
 label.grid(row=4, column=0, columnspan=3)
 
 reset_button = Button(root, text="Reset", command=reset)
-reset_button.grid(row=5, column=0, columnspan=3, pady=(10,20))
+reset_button.grid(row=5, column=0, columnspan=3, pady=Y_PADDING)
 
 
 def place_window():
