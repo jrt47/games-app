@@ -1,7 +1,8 @@
 from tkinter import *
-from random import sample
+import random
 import threading
 import time
+import string
 
 WIDTH = 270
 HEIGHT = 290
@@ -14,11 +15,6 @@ Y_PADDING = 10
 
 TITLE = "Memory Puzzle"
 
-ALL_CARDS = ['A', 'A', 'B', 'B', 'C',
-             'C', 'D', 'D', 'E', 'E',
-             'V', 'V', 'W', 'W', 'X',
-             'X', 'Y', 'Y', 'Z', 'Z']
-
 cards = []
 revealed = []
 
@@ -29,7 +25,10 @@ reveal_enabled = True
 
 def shuffle_cards():
     global cards
-    cards = sample(ALL_CARDS, len(ALL_CARDS))
+    alphabet = list(string.ascii_uppercase)
+    letters = random.sample(alphabet, 10)
+    cards = [l for l in letters for n in range(2)]
+    random.shuffle(cards)
 
 
 def button_click(n):
