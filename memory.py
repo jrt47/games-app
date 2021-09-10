@@ -104,16 +104,6 @@ def keep_groove(event):
         event.widget.config(relief=GROOVE)
 
 
-def place_window():
-    w = WIDTH
-    h = HEIGHT
-    ws = root.winfo_screenwidth()
-    hs = root.winfo_screenheight()
-    x = ws/2 - w/2
-    y = hs/2 - h/2
-    root.geometry("%dx%d+%d+%d" % (w, h, x, y))
-
-
 root = Tk()
 root.title(TITLE)
 
@@ -222,11 +212,17 @@ reset_button.grid(row=6, column=0, columnspan=5, pady=Y_PADDING)
 
 root.bind('<Button-1>', keep_groove)
 
+ws = root.winfo_screenwidth()
+hs = root.winfo_screenheight()
+x = ws/2 - WIDTH/2
+y = hs/2 - HEIGHT/2
+root.geometry("%dx%d+%d+%d" % (WIDTH, HEIGHT, x, y))
+
 
 def start():
     reset()
-    place_window()
     root.mainloop()
 
 
-start()
+if __name__ == '__main__':
+    start()

@@ -90,16 +90,6 @@ def check_for_tie():
     return turn_counter >= 9
 
 
-def place_window():
-    w = WIDTH
-    h = HEIGHT
-    ws = root.winfo_screenwidth()
-    hs = root.winfo_screenheight()
-    x = ws/2 - w/2
-    y = hs/2 - h/2
-    root.geometry("%dx%d+%d+%d" % (w, h, x, y))
-
-
 def keep_groove(event):
     if event.widget in buttons:
         event.widget.config(relief=GROOVE)
@@ -167,11 +157,17 @@ reset_button.grid(row=5, column=0, columnspan=3, pady=Y_PADDING)
 
 root.bind('<Button-1>', keep_groove)
 
+ws = root.winfo_screenwidth()
+hs = root.winfo_screenheight()
+x = ws/2 - WIDTH/2
+y = hs/2 - HEIGHT/2
+root.geometry("%dx%d+%d+%d" % (WIDTH, HEIGHT, x, y))
+
 
 def start():
     reset()
-    place_window()
     root.mainloop()
 
 
-start()
+if __name__ == '__main__':
+    start()
